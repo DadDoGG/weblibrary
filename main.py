@@ -1,7 +1,5 @@
-from sweater import app, db
+from sweater import app
 
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-
