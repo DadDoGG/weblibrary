@@ -5,14 +5,28 @@
     <title>Hello</title>
 </head>
 <body>
-<h1>Hello mir</h1>
-<form method = "POST" action="/add_book">
+<h1>Добро пожаловать в библиотеку</h1>
+<form method = "POST" action="/add_book" >
+    <label for="title">Название книги:</label>
     <input type="text" name="title">
-    <input type="datetime-local" name="god_vipuska">
+    <label for="title">Год выпуска:</label>
+    <input type="number" min="1000" max="2099" step="1" name="god_vipuska">
+    <label for="title">Фамилия и имя автора:</label>
+    <input type="text" name="surname">
+    <input type="text" name="initials">
     <button type="submit">Add book</button>
 </form>
-
-
-
+    <h2>Список книг</h2>
+    <ul>
+        {% for book in books %}
+            <li><a href="{{ url_for('showBook', id_book=book.id)}}">{{ book.title }}</a>
+                    {% for authors in book.authors %}
+                        {{ authors.surname }}
+                        {{ authors.initials }}
+                        {% if not loop.last %}, {% endif %}
+                    {% endfor %}
+            </li>
+        {% endfor %}
+    </ul>
 </body>
 </html>
