@@ -40,3 +40,14 @@ def showBook(id_book):
         return render_template('book.html', book=book)
     else:
         return "Книга не найдена", 404
+
+@app.route("/book/<int:id_book>/del")
+def deleteBook(id_book):
+    book = Books.query.get_or_404(id_book)
+    try:
+        db.session.delete(book)
+        db.session.commit()
+        return redirect('/index')
+    except:
+        return "При удалении произошла ошибка"
+
