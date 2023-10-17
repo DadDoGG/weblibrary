@@ -1,33 +1,41 @@
-from datetime import datetime
+from flask_login import UserMixin
 
-from sweater import db
+from sweater import db, manager
 
-
-class Books(db.Model):
-    __tablename__ = 'Books'
+class BaseIdModel(db.Model):
+    __abstract__ = True
     id = db.Column(db.Integer, primary_key=True)
+
+
+class book(BaseIdModel):
+    __tablename__ = 'book'
     title = db.Column(db.String(128), nullable=False)
-    god_vipuska = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    year_created = db.Column(db.Integer, nullable=False)
 
-    authors = db.relationship('Authors', secondary='Relation', back_populates='books')
-
-    def __init__(self, title, god_vipuska):
-        self.title = title
-        self.god_vipuska = god_vipuska
+    user = db.relationship('user', secondary='book_user', back_populates='book')
 
 
-class Authors(db.Model):
-    __tablename__ = 'Authors'
-    id = db.Column(db.Integer, primary_key=True)
+class user(BaseIdModel, UserMixin):
+    __tablename__ = 'user'
+    email = db.Column(db.String(120), unique=True)
     surname = db.Column(db.String(32), nullable=False)
-    initials = db.Column(db.String(32), nullable=False)
+    last_name = db.Column(db.String(32), nullable=False)
+    password = db.Column(db.String(320), nullable=False)
+    permission = db.Column(db.String(10), default="User")
 
-    books = db.relationship('Books', secondary='Relation', back_populates='authors')
-    def __init__(self, surname, initials):
-        self.surname = surname
-        self.initials = initials
+    book = db.relationship('book', secondary='book_user', back_populates='user')
 
-class Relation(db.Model):
-    __tablename__ = 'Relation'
-    book_id = db.Column(db.Integer, db.ForeignKey('Books.id'), primary_key=True)
-    author_id = db.Column(db.Integer, db.ForeignKey('Authors.id'), primary_key=True)
+@manager.user_loader
+def load_user(user_id):
+    return user.query.get(user_id)
+
+
+class book_user(db.Model):
+    __tablename__ = 'book_user'
+    book_id = db.Column(db.Integer, db.ForeignKey('book.id'), primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+
+class menu(BaseIdModel):
+    __tablename__ = 'menu'
+    url = db.Column(db.String(120), unique=True)
+    title = db.Column(db.String(120), unique=True)

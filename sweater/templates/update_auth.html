@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link type="text/css" href="{{ url_for('static', filename='css/styles.css')}}" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <title>Редактировани</title>
+</head>
+<body>
+<form method = "POST" >
+    {%- block mainmenu -%}
+    <ul class="mainmenu">
+        {% for p in menus %}
+            <li><a href="{{p.url}}">{{p.title}}</a></li>
+        {% endfor %}
+    </ul>
+	{% endblock mainmenu -%}
+<h1>Редактирование автора</h1>
+    <label for="title">email:</label>
+    <input type="text" name="email" value="{{ users.email }}">
+    <label for="title">Surname:</label>
+    <input type="text" name="surname" value="{{ users.surname }}">
+    <label for="title">Last Name:</label>
+    <input type="text" name="last_name" value="{{ users.last_name }}">
+    <button type="submit">Обновить</button>
+</form>
+</body>
+</html>

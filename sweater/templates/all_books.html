@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link type="text/css" href="{{ url_for('static', filename='css/styles.css')}}" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{%- block mainmenu -%}
+    <ul class="mainmenu">
+        {% for p in menus %}
+            <li><a href="{{p.url}}">{{p.title}}</a></li>
+        {% endfor %}
+    </ul>
+	{% endblock mainmenu -%}
+<h2>Список книг</h2>
+    <ul>
+        {% for book in books %}
+            <li><a href="{{ url_for('show_book', id_book=book.id)}}">{{ book.title }}</a>
+                    {% for authors in book.authors %}
+                        {{ authors.surname }}
+                        {{ authors.last_name }}
+                        {% if not loop.last %}, {% endif %}
+                    {% endfor %}
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

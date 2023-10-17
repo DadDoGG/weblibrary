@@ -1,12 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{{ book.title }}</title>
+    <link type="text/css" href="{{ url_for('static', filename='css/styles.css')}}" rel="stylesheet" />
+    <title>{{ books.title }}</title>
 </head>
 <body>
-    <h1>{{ book.title }}</h1>
-    <p>Год выпуска: {{ book.god_vipuska }}</p>
-{#    <a href="{{ url_for('updateBook', id_book=book.id)}}" class="btn">Обновить</a>#}
-    <a href="{{ url_for('deleteBook', id_book=book.id)}}" class="btn">Удалить</a>
+    {%- block mainmenu -%}
+    <ul class="mainmenu">
+        {% for p in menus %}
+            <li><a href="{{p.url}}">{{p.title}}</a></li>
+        {% endfor %}
+    </ul>
+	{% endblock mainmenu -%}
+    <h1>{{ books.title }}</h1>
+    <p>Год выпуска: {{ books.year_created }}</p>
+    <ul>
+        {% for author in authors %}
+            <li>{{ author.last_name }} {{ author.surname }}</li>
+        {% endfor %}
+    </ul>
+    {% if current_user.is_authenticated %}
+        {% if current_user.permission == 'admin' or current_user.id in author_ids %}
+            <a href="{{ url_for('delete_book', id_book=books.id)}}" class="btn">Удалить</a>
+            <a href="/book/{{ books.id }}/upd">Обновить</a>
+        {% endif %}
+    {% endif %}
 </body>
 </html>
