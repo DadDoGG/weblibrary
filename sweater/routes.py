@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from sweater import app, db
 from sweater.models import book, user, book_user, menu
+from .forms import LoginForm, RegisterForm, EdditForm
 
 
 @app.route('/', methods=['GET'])
@@ -80,22 +81,17 @@ def delete_book(id_book):
 def login():
     if current_user.is_authenticated:
         return redirect('/profile')
-    else:
-        email = request.form.get('email')
-        password = request.form.get('password')
 
-        if email and password:
-            User = user.query.filter_by(email=email).first()
-
-            if User and check_password_hash(User.password, password):
-                rm = True if request.form.get('remain') else False
-                login_user(User, remember=rm)
-
-                return redirect('/profile')
-            else:
-                flash("Неверная пара логин/пароль", "error")
-
-        return render_template('login.html', menus=menu.query.all(), title='Авторизация')
+    form = LoginForm()
+    if form.validate_on_submit():
+        User = user.query.filter_by(email=form.email.data).first()
+        if User and check_password_hash(User.password, form.psw.data):
+            rm = form.remember.data
+            login_user(User, remember=rm)
+            return redirect('/profile')
+        else:
+            flash("Неверная пара логин/пароль", "error")
+    return render_template('login.html', menus=menu.query.all(), title='Авторизация', form=form)
 
 
 @app.route('/logout', methods=['GET', 'POST'])
@@ -108,23 +104,19 @@ def logout():
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
-    if request.method == "POST":
-        if len(request.form['password']) > 4 and request.form['password'] == request.form['password2']:
-            hash = generate_password_hash(request.form['password'])
-            res = user(email=request.form['email'], surname=request.form['surname'], last_name=request.form['last_name'],
-                       password=hash)
+    form = RegisterForm()
+    if form.validate_on_submit():
+            hash = generate_password_hash(form.psw.data)
+            res = user(email=form.email.data, surname=form.surname.data, last_name=form.last_name.data, password=hash)
             db.session.add(res)
             db.session.commit()
             if res:
-                flash("Вы успешно зарегестрированы", "success")
+                flash("Вы успешно зарегистрированы", "success")
                 return redirect(url_for('login'))
             else:
                 flash("Ошибка при добавлении в БД", "error")
-        else:
-            flash("Неверно заполнены поля", "error")
-    db.session.close()
 
-    return render_template('register.html', menus=menu.query.all())
+    return render_template("register.html", menus=menu.query.all(), form=form)
 
 
 @app.route("/book/<int:id_book>/upd", methods=['GET', 'POST'])
@@ -222,12 +214,18 @@ def delete_author(id_user):
 @login_required
 def update_author(id_user):
     users = user.query.get(id_user)
+    if request.method == 'GET':
+        form = EdditForm(user=users)
+    elif request.method == 'POST':
+        form = EdditForm()
+    else:
+        return 405
     if users:
         if current_user.permission == "admin" or current_user == users:
-            if request.method=="POST":
-                users.email = request.form['email']
-                users.surname = request.form['surname']
-                users.last_name = request.form['last_name']
+            if form.validate_on_submit():
+                users.email = form.email.data
+                users.surname = form.surname.data
+                users.last_name = form.last_name.data
 
                 try:
                     db.session.commit()
@@ -236,7 +234,6 @@ def update_author(id_user):
                 except Exception:
                     return "При редактировании произошла ошибка"
             else:
-                return render_template('update_auth.html', users=users, menus=menu.query.all())
+                return render_template('update_auth.html', users=users, menus=menu.query.all(), form=form)
         else:
             return "Вы не пользователь данного профиля"
-

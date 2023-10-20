@@ -6,28 +6,23 @@
 <div class="flash {{cat}}">{{msg}}</div>
 {% endfor %}
 <form class="register-form" action="/register" method="post">
-    <p>
-        <label for="email">Email:</label>
-        <input type="text" id="email" name="email" value="" required />
-    </p>
-    <p>
-        <label for="surname">Имя:</label>
-        <input type="text" id="surname" name="surname" value="" required />
-    </p>
-    <p>
-        <label for="last_name">Фамилия:</label>
-        <input type="text" id="last_name" name="last_name" value="" required />
-    </p>
-    <p>
-        <label for="password">Пароль:</label>
-        <input type="password" id="password" name="password" value="" required />
-    </p>
-    <p>
-        <label for="password2">Повтор пароля:</label>
-        <input type="password" id="password2" name="password2" value="" required />
-    </p>
-    <p>
-        <input type="submit" value="Регистрация" />
-    </p>
+    {{ form.hidden_tag() }}
+
+{% for field in form if field.name not in ['csrf_token', 'submit'] -%}
+	<p>{{ field.label() }}
+	{% if field.errors %}
+		{{ field(class="invalid") }}
+	<span class="invalid-feedback">
+		{% for e in field.errors %}
+		{{ e }}
+		{% endfor %}
+	</span>
+	{% else %}
+		{{ field() }}
+	{% endif %}
+{% endfor %}
+
+
+<p>{{ form.submit() }}
 </form>
 {% endblock %}

@@ -3,13 +3,30 @@
 {% block content %}
     {{ super() }}
 <form method = "POST" >
+{{ form.hidden_tag() }}
 <h1>Редактирование автора</h1>
-    <label for="title">email:</label>
-    <input type="text" name="email" value="{{ users.email }}">
-    <label for="title">Surname:</label>
-    <input type="text" name="surname" value="{{ users.surname }}">
-    <label for="title">Last Name:</label>
-    <input type="text" name="last_name" value="{{ users.last_name }}">
-    <button type="submit">Обновить</button>
+    {% for field in form if field.name not in ['csrf_token', 'submit'] -%}
+	<p>{{ field.label() }}
+	{% if field.errors %}
+		{{ field(class="invalid") }}
+	<span class="invalid-feedback">
+		{% for e in field.errors %}
+		{{ e }}
+		{% endfor %}
+	</span>
+	{% else %}
+		{{ field()}}
+	{% endif %}
+{% endfor %}
+
+<p>{{ form.submit() }}
+{#<h1>Редактирование автора</h1>#}
+{#    <label for="title">email:</label>#}
+{#    <input type="text" name="email" value="{{ users.email }}">#}
+{#    <label for="title">Surname:</label>#}
+{#    <input type="text" name="surname" value="{{ users.surname }}">#}
+{#    <label for="title">Last Name:</label>#}
+{#    <input type="text" name="last_name" value="{{ users.last_name }}">#}
+{#    <button type="submit">Обновить</button>#}
 </form>
 {% endblock %}

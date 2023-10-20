@@ -63,7 +63,21 @@ div.content {
 	border: 1px solid #FF4343;
 	background: #FF9C9C;
 }
+.register-form .invalid {
+    background: #FF9898;
+}
 
+.register-form .invalid-feedback {
+    color: #CC0000;
+}
+
+.login-form .invalid {
+    background: #FF9898;
+}
+
+.login-form .invalid-feedback {
+    color: #CC0000;
+}
 
 .book-list {
     list-style: none;
