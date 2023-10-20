@@ -1,18 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <link type="text/css" href="{{ url_for('static', filename='css/styles.css')}}" rel="stylesheet" />
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-{%- block mainmenu -%}
-    <ul class="mainmenu">
-        {% for p in menus %}
-            <li><a href="{{p.url}}">{{p.title}}</a></li>
-        {% endfor %}
-    </ul>
-	{% endblock mainmenu -%}
+{% extends 'base.html' %}
+
+{% block content %}
+    {{ super() }}
 <h1>Добро пожаловать в библиотеку</h1>
 <form method = "POST" >
     <label for="title">Название книги:</label>
@@ -21,5 +10,4 @@
     <input type="number" min="1000" max="2099" step="1" name="year_created" value="{{ books.year_created }}">
     <button type="submit">Обновить</button>
 </form>
-</body>
-</html>
+{% endblock %}

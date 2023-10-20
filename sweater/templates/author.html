@@ -1,21 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <link type="text/css" href="{{ url_for('static', filename='css/styles.css')}}" rel="stylesheet" />
-    <title>{{ users.surname }}</title>
-</head>
-<body>
-    {%- block mainmenu -%}
-    <ul class="mainmenu">
-        {% for p in menus %}
-            <li><a href="{{p.url}}">{{p.title}}</a></li>
-        {% endfor %}
-    </ul>
-	{% endblock mainmenu -%}
+{% extends 'base.html' %}
+
+{% block content %}
+    {{ super() }}
+
     <h1>{{ users.surname }} {{ users.last_name }}</h1>
     <ul>
         {% for book in books %}
-            <li>Название: {{ book.title }}, Год выпуска: {{ book.year_created }}</li>
+            <li> Название:<a href="/book/{{ book.id }}"> {{ book.title }},</a> Год выпуска: {{ book.year_created }}</li>
         {% endfor %}
     </ul>
     {% if current_user.is_authenticated %}
@@ -24,5 +15,4 @@
     <a href="/authors/{{ users.id }}/upd">Обновить</a>
         {% endif %}
     {% endif %}
-</body>
-</html>
+{% endblock %}

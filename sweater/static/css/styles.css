@@ -64,22 +64,177 @@ div.content {
 	background: #FF9C9C;
 }
 
-ul.list-posts {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	max-width: 600px;
+
+.book-list {
+    list-style: none;
+    padding: 0;
 }
-ul.list-posts li {
-	margin: 20px 0 0 0;
-	border: 1px solid #eee;
+
+.book-item {
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
 }
-ul.list-posts .title {
-	margin: 0;
-	padding: 5px;
-	background: #eee;
+
+.book-item a {
+    text-decoration: none;
+    color: #333;
 }
-ul.list-posts .annonce {
-	margin: 0;
-	padding: 10px 5px 10px 5px;
+
+.authors {
+    font-style: italic;
+    color: #666;
+}
+
+.author-list {
+    list-style: none;
+    padding: 0;
+}
+
+.author-item {
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+}
+
+.author-item a {
+    text-decoration: none;
+    color: #333;
+}
+
+.author-books {
+    font-style: italic;
+    color: #666;
+}
+
+.login-form {
+    max-width: 300px;
+    margin: 0 auto;
+    padding: 50px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f8f8f8;
+}
+
+.login-form p {
+    margin: 10px 0;
+}
+
+.login-form label {
+    display: block;
+    font-weight: bold;
+}
+
+.login-form input[type="text"],
+.login-form input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+
+.login-form input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+.login-form input[type="submit"] {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.login-form input[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+.login-form a {
+    text-decoration: none;
+    color: #007BFF;
+    font-weight: bold;
+}
+
+.register-form {
+    max-width: 300px;
+    margin: 0 auto;
+    padding: 50px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f8f8f8;
+}
+
+.register-form p {
+    margin: 10px 0;
+}
+
+.register-form label {
+    display: block;
+    font-weight: bold;
+}
+
+.register-form input[type="text"],
+.register-form input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+
+.register-form input[type="submit"] {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.register-form input[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+
+.dropdown-checkbox{
+  position:relative;
+  display:inline-block
+}
+
+.dropdown-checkbox .label-title{
+  font-size:17px;
+  border: 1px solid #000;
+  padding: 2px;
+
+}
+.dropdown-checkbox ul{
+     position: absolute;
+    background: #cacaca;
+    list-style: none;
+    min-width: 180px;
+    margin: 0px;
+    padding:0px;
+    left:0px;
+    display:none;
+    z-index:1;
+    border: 1px solid #9c9c9c;
+}
+.dropdown-checkbox ul li{
+    font-size: 15px;
+    padding: 10px;
+    border-bottom: 1px solid #a5a5a5;
+    margin: 0px;
+}
+.dropdown-checkbox ul li input{
+  margin-right:10px;
+}
+
+.dropdown-checkbox:hover ul{
+  display:block
 }

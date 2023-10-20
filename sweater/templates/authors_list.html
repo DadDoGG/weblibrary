@@ -3,7 +3,7 @@
 <head>
     <link type="text/css" href="{{ url_for('static', filename='css/styles.css')}}" rel="stylesheet" />
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Авторы</title>
 </head>
 <body>
 {%- block mainmenu -%}
@@ -13,17 +13,20 @@
         {% endfor %}
     </ul>
 	{% endblock mainmenu -%}
-<h2>Список авторов</h2>
-    <ul>
-        {% for user in authors %}
-            <li><a href="{{ url_for('show_user', id_user=user.id)}}">{{ user.surname }} {{ user.last_name }}</a>
-                    {% for authors in user.books %}
-                        {{ authors.surname }}
-                        {{ authors.last_name }}
-                        {% if not loop.last %}, {% endif %}
-                    {% endfor %}
-            </li>
-        {% endfor %}
-    </ul>
+{% if current_user.permission=='admin' %}
+    <h2>Список авторов и юзеров</h2>
+{% else %}
+    <h2>Список авторов</h2>
+{% endif %}
+<ul class="author-list">
+    {% for user in authors %}
+        <li class="author-item">
+            <a href="{{ url_for('show_user', id_user=user.id) }}">{{ user.surname }} {{ user.last_name }}</a>
+            {% if current_user.permission=='admin' %}
+               | {{ user.permission }}
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>
 </body>
 </html>
