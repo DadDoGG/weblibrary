@@ -1,9 +1,10 @@
 from flask import request, redirect, url_for, render_template, flash
 from flask_login import login_user, login_required, logout_user, current_user
+from sqlalchemy import func
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from sweater import app, db
-from sweater.models import book, user, book_user, menu
+from sweater.models import book, user, book_user, menu, Favorite
 from .forms import LoginForm, RegisterForm, EdditForm
 
 
@@ -148,21 +149,54 @@ def update_book(id_book):
 @login_required
 def profile():
     authors = user.query.filter(user.permission == 'author', user.id != current_user.id).all()
-    return render_template('profile.html', current_user=current_user, menus=menu.query.all(), authors=authors)
+    favorites = Favorite.query.filter_by(user_id=current_user.id).all()
+    return render_template('profile.html', current_user=current_user, menus=menu.query.all(), authors=authors, favorites=favorites, user=user)
 
 @app.route('/books')
 def books():
     per_page = 10
     page = request.args.get('page', type=int, default=1)
-    books = book.query.paginate(page=page, per_page=per_page, error_out=False)
-    return render_template('all_books.html', menus=menu.query.all(), books=books, title="Книги")
+    q = request.args.get('q')
+    if q:
+        books = db.session.query(book).join(user, book.user).filter(func.lower(book.title).contains(q.lower()) | func.lower(user.surname).contains(q.lower()) | func.lower(user.last_name).contains(q.lower()))
+    else:
+        books = book.query.paginate(page=page, per_page=per_page, error_out=False)
 
-@app.route('/search_book', methods=['GET', 'POST'])
-def search_book():
-    name = request.form['title']
-    if request.method == 'POST' and name:
+    return render_template('all_books.html', menus=menu.query.all(), books=books, title="Книги", current_user=current_user)
 
-        return render_template('all_books.html', books=book.query.filter_by(title=name))
+
+@app.route('/favorite/<int:id_user>')
+@login_required
+def favorite(id_user):
+    try:
+        comm = Favorite(auth_id=id_user, user_id=current_user.id)
+        db.session.add(comm)
+        db.session.commit()
+        db.session.close()
+        flash("Автор был успешно добавлен в избранное", "success")
+    except Exception:
+        flash("Данный автор уже у вас в избранном", "error")
+    previous_url = request.referrer
+    return redirect(previous_url)
+
+
+@app.route('/unfavorite/<int:id_user>')
+@login_required
+def unfavorite(id_user):
+    try:
+        favorite_to_remove = Favorite.query.filter_by(auth_id=id_user, user_id=current_user.id).first()
+        if favorite_to_remove:
+            db.session.delete(favorite_to_remove)
+            db.session.commit()
+            db.session.close()
+            flash("Автор успешно удален из избранного", "success")
+        else:
+            flash("Данный автор не был в вашем избранном", "error")
+    except Exception:
+        flash("Произошла ошибка при удалении", "error")
+
+    previous_url = request.referrer
+    return redirect(previous_url)
 
 
 @app.route('/authors')
@@ -173,12 +207,17 @@ def authors_list():
         authors = user.query.all()
     return render_template('authors_list.html', menus=menu.query.all(), authors=authors, current_user=current_user)
 
+
 @app.route("/authors/<int:id_user>")
 def show_user(id_user):
     users = user.query.get(id_user)
     if users:
         books = users.book
-        return render_template('author.html', users=users, books=books, current_user=current_user, menus=menu.query.all(), title="Автор")
+        if current_user.is_authenticated:
+            favorites = Favorite.query.filter_by(user_id=current_user.id)
+        else:
+            favorites = None
+        return render_template('author.html', users=users, books=books, current_user=current_user, menus=menu.query.all(), title="Автор", favorites=favorites)
     else:
         return "Книга не найдена", 404
 
@@ -199,13 +238,21 @@ def delete_author(id_user):
                 for book in books_to_delete:
                     db.session.delete(book)
 
+                favorite_to_remove = Favorite.query.filter_by(auth_id=id_user)
+                for fav in favorite_to_remove:
+                    db.session.delete(fav)
+
+                favorite_to_remove = Favorite.query.filter_by(user_id=id_user)
+                for fav in favorite_to_remove:
+                    db.session.delete(fav)
+
                 db.session.delete(users)
                 db.session.commit()
                 db.session.close()
                 flash("Вы успешно удалили профиль", "success")
                 return redirect('/')
             except Exception:
-                return "При удалении произошла ошибка"
+                flash("Произошла ошибка при удалении", "error")
         else:
             return "Вы не автор данной книги"
 

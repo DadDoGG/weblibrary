@@ -1,4 +1,5 @@
 from flask_login import UserMixin
+from sqlalchemy import UniqueConstraint
 
 from sweater import db, manager
 
@@ -25,6 +26,16 @@ class user(BaseIdModel, UserMixin):
 
     book = db.relationship('book', secondary='book_user', back_populates='user')
 
+class Favorite(BaseIdModel):
+    __tablename__ = 'favorite'
+    auth_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer)
+
+    __table_args__ = (
+        UniqueConstraint('auth_id', 'user_id', name='uq_auth_user'),
+    )
+
+
 @manager.user_loader
 def load_user(user_id):
     return user.query.get(user_id)
@@ -39,3 +50,4 @@ class menu(BaseIdModel):
     __tablename__ = 'menu'
     url = db.Column(db.String(120), unique=True)
     title = db.Column(db.String(120), unique=True)
+

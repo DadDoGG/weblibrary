@@ -11,7 +11,7 @@
     <input type="number" min="1000" max="2024" step="1" name="year_created" value="2023">
 
         <div class="dropdown-checkbox form-group">
-            <label class="label-title">Выберете соавтора</label>
+            <label class="label-title">Выберите соавтора</label>
             <ul>
             {% for a in authors %}
                 <li><label><input type="checkbox" name="type[]" value="{{ a.id }}">{{ a.last_name }} {{ a.surname }}</label></li>
@@ -20,6 +20,14 @@
         </div>
     <button type="submit">Добавить книгу </button>
     </form>
+<ul>
+
+
+{% for favorite in favorites %}
+    {% set author = user.query.get(favorite.auth_id) %}
+    Вы подписаны на:<li><a href="/authors/{{ favorite.auth_id }}">{{ author.surname }} {{ author.last_name }}</a></li>
+{% endfor %}
+</ul>
 <p><a href="/authors/{{ current_user.id }}">Ваша страница автора</a></p>
 <p><a href="{{ url_for('logout') }}">Выход</a></p>
 

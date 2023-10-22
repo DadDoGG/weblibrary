@@ -7,11 +7,13 @@
     <link type="text/css" href="{{ url_for('static', filename='css/styles.css')}}" rel="stylesheet" />
 
 
-<form method = "POST" action="{{ url_for('search_book') }}" >
-    <label for="title">Поиск книги:</label>
-    <input type="text" name="title">
-    <button type="submit">Найти</button>
-</form>
+
+{% if current_user.is_authenticated %}
+    <form method = "GET" id="search-form">
+        <input type="text" placeholder="Поиск книги" name="q" value="{{ request.args.get('q', '') }}">
+        <button type="submit">Поиск</button>
+    </form>
+{% endif %}
 
 
 <ul class="book-list">
@@ -26,6 +28,7 @@
             </span>
         </li>
     {% endfor %}
+{% if books.iter_pages %}
 </ul>
 <nav aria-label="Page navigation example">
     <ul class="pagination">
@@ -50,4 +53,5 @@
         {% endif %}
     </ul>
 </nav>
+{% endif %}
 {% endblock %}

@@ -2,6 +2,30 @@
 
 {% block content %}
     {{ super() }}
+{% for cat, msg in get_flashed_messages(True) %}
+<div class="flash {{cat}}">{{msg}}</div>
+{% endfor %}
+
+    {% if current_user.is_authenticated %}
+        {% if users.id == current_user.id %}
+            {{ pass }}
+            {% else %}
+{% if users.id not in favorites|map(attribute='auth_id') %}
+    <a href="{{ url_for('favorite', id_user=users.id) }}" onclick="onAddFavorite" class="btn">Добавить в избранное</a>
+{% else %}
+    <a href="{{ url_for('unfavorite', id_user=users.id) }}" onclick="onAddFavorite" class="btn">Удалить из избранного</a>
+    {% endif %}
+{% endif %}
+    {% else %}
+    {{ pass }}
+    {% endif %}
+
+    <script>
+        function onAddFavorite()
+            {
+                window.location.reload()
+            }
+    </script>
 
     <h1>{{ users.surname }} {{ users.last_name }}</h1>
     <ul>
